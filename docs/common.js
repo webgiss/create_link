@@ -8,7 +8,7 @@
  * @param {String} params.id
  * @param {String} params.href
  * @param {String} params.src
- * @param {{key: String, value: String}} params.properties
+ * @param {{[key: String]: String}} params.properties
  * @param {HTMLElement} params.parent
  * @param {HTMLElement[]} params.children
  * @param {(element: HTMLElement) => void} params.on_created
@@ -68,7 +68,6 @@ const create_element = (params) => {
  * @param {string} styleText The CSS string to pass
  * @returns {void}
  */
-
 const addStyle = (() => {
     /** @type HTMLStyleElement */
     let styleElement = null;
@@ -170,3 +169,17 @@ const copyTextToClipboard = (text) => {
  const delay = (interval) => new Promise((resolve)=>{
     setTimeout(()=>resolve(), interval)
 })
+
+/**
+ * Get all the params in the url as a javascript dictionnary (type Object)
+ * 
+ * @returns {{[key: String]: String}}
+ */
+const get_params = () => {
+    const param_array = location.search.slice(1).split('&').map((param) => [param.split('=')[0], param.split('=').slice(1).join('=')])
+    const result = {}
+    for (let [key, value] of param_array) {
+        result[key] = decodeURIComponent(value)
+    }
+    return result
+}

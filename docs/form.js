@@ -32,6 +32,8 @@ const start = () => {
     let form_element = null
     /** @type HTMLButtonElement */
     let button_element = null
+    /** @type HTMLDivElement */
+    let workspace_element = null
 
     addStyle('.workspace { padding: 10px }')
     addStyle('.hidden { display: none }')
@@ -40,6 +42,7 @@ const start = () => {
     create_element({
         classNames: ['workspace'],
         parent: document.body,
+        on_created: (element) => { workspace_element = element },
         children: [
             create_element({
                 classNames: ['ui', 'segment'],
@@ -80,6 +83,7 @@ const start = () => {
                                     create_element({
                                         classNames: ['field'],
                                         children: [
+                                            create_label('Result Link'),
                                             create_input({
                                                 classNames: ['final_link'],
                                                 on_created: (element) => { final_link_element = element },
@@ -90,7 +94,7 @@ const start = () => {
                                         name: 'button',
                                         classNames: ['ui', 'button', 'blue', 'fluid', 'submit'],
                                         text: 'Copy',
-                                        on_created: (element) => {button_element=element},
+                                        on_created: (element) => { button_element = element },
                                     }),
                                 ]
                             }),
@@ -109,10 +113,6 @@ const start = () => {
     window.form_element = form_element
 
     const update_final_link = () => {
-        // console.log({
-        //     image_url: image_url_element.value,
-        //     link_url: link_url_element.value,
-        // })
         const base_url = new URL('./link.html', location.href).toString()
         const image_url = image_url_element.value
         const link_url = link_url_element.value
@@ -121,10 +121,10 @@ const start = () => {
         final_link_element.readOnly = true
         final_link_element.value = url
         // if (result_exists) {
-             result_element.classList.remove('hidden')
+        //     result_element.classList.remove('hidden')
         // } else {
         //    result_element.classList.add('hidden')
-        //}
+        // }
         console.log({ url })
     }
 
@@ -144,13 +144,52 @@ const start = () => {
         button_element.classList.remove('blue')
         button_element.classList.add('green')
         button_element.innerText = 'Copied !'
-        delay(500).then(()=>{
+        delay(500).then(() => {
             final_link_element.classList.remove('copied')
             button_element.classList.remove('green')
             button_element.classList.add('blue')
-                button_element.innerText = 'Copy'
+            button_element.innerText = 'Copy'
         })
     })
+
+    const { help } = get_params()
+
+    if (help) {
+        if (help === 'notion_fr') {
+            create_element({
+                classNames: ['ui', 'segment'],
+                parent: workspace_element,
+                children: [
+                    create_element({
+                        name: 'p',
+                        text: 'Pour insérer une image cliquable dans notion.so, il faut :'
+                    }),
+                    create_element({
+                        name: 'ol',
+                        children: [
+                            create_element({
+                                name: 'li',
+                                text: 'Mettre le lien vers une image dans le champs "Image URL".',
+                            }),
+                            create_element({
+                                name: 'li',
+                                text: 'Mettre le lien vers la page ou aller quand on clique sur l\'image dans le champs "Link URL".',
+                            }),
+                            create_element({
+                                name: 'li',
+                                text: 'Cliquer sur le bouton « Copy » pour placer le lien résultat dans le presse-papier.',
+                            }),
+                            create_element({
+                                name: 'li',
+                                text: 'Enfin dans notion, insérer un bloc de type « Intégration » ("embed" en anglais) en y plaçant le lien dans le presse papier.',
+                            }),
+                        ]
+                    }),
+                ],
+            })
+        }
+
+    }
 }
 
 readyPromise.then(() => start())

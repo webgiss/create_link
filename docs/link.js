@@ -1,15 +1,5 @@
 const start = () => {
-    const params = location.search.slice(1).split('&').map((param) => [param.split('=')[0], param.split('=').slice(1).join('=')])
-    let image = null
-    let link = null
-    for (let [name, value] of params) {
-        if (name === 'image') {
-            image = decodeURIComponent(value)
-        }
-        if (name === 'link') {
-            link = decodeURIComponent(value)
-        }
-    }
+    const { image, link } = get_params()
 
     addStyle('body { margin: 0; border: 0; padding: 0; overflow: hidden; position: absolute;}')
     addStyle('.workspace, a, img { margin: 0; border: 0; padding: 0}')
